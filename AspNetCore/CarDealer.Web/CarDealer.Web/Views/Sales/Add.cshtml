@@ -1,0 +1,36 @@
+﻿@model SaleFormViewModel
+
+@{
+    ViewData["Title"] = "Add Sale";
+}
+
+<h2>@ViewData["Title"]</h2>
+<br/>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="CustomerId"></label>
+                <select asp-for="CustomerId" asp-items="@Model.Customers" class="form-control"></select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarId"></label>
+                <select asp-for="CarId" asp-items="@Model.Cars" class="form-control"></select>
+                <span asp-validation-for="CarId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Discount"></label>
+                <br/>
+                <small>*Discount must be a percentage value. Example: 33.33%</small>
+                <input asp-for="Discount" min="0" class="form-control" />
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-success" value="Add Sale" />
+            </div>
+        </form>
+    </div>
+</div>
+

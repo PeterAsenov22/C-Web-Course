@@ -1,0 +1,54 @@
+﻿@using System.Globalization
+@model AllCustomersViewModel
+
+@{
+    ViewData["Title"] = "All Customers";
+}
+
+<h2>@ViewData["Title"]</h2>
+<br/>
+<h3 class="text-center">Ordered in @Model.OrderDirection.ToString().ToLower() direction</h3>
+<br/>
+
+<table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Birth Date
+        </th>
+        <th>
+            Is Young Driver
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+        <tr>
+            <td>
+                @customer.Name
+            </td>
+            <td>
+                @customer.BirthDate.ToShortDateString()
+            </td>
+            <td>
+                @(customer.IsYoungDriver ? "Yes" : "No")
+            </td>
+            <td class="text-center">
+                <a class="btn btn-sm btn-info" href="/customers/@customer.Id">More Details</a>
+            </td>
+            <td class="text-center">
+                <a class="btn btn-sm btn-warning" href="/customers/edit/@customer.Id">Edit</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+

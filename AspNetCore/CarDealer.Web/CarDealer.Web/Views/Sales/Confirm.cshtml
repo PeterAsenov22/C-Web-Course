@@ -1,0 +1,49 @@
+﻿@model ConfirmSaleViewModel
+
+@{
+    ViewData["Title"] = "Confirm Sale";
+}
+
+<h2>@ViewData["Title"]</h2>
+<br/>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="CustomerName"></label>
+                <input asp-for="CustomerName" readonly class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarFullName"></label>
+                <input asp-for="CarFullName" readonly class="form-control" />
+                <span asp-validation-for="CarFullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Discount</label>
+                <input type="text" value="@Model.Discount% @(Model.IsYoungDriver ? "(+5%)" : "")" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="CarPrice"></label>
+                <input asp-for="CarPrice" readonly class="form-control" />
+                <span asp-validation-for="CarPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FinalPrice"></label>
+                <input asp-for="FinalPrice" readonly class="form-control" />
+                <span asp-validation-for="FinalPrice" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="CustomerId" />
+            <input type="hidden" asp-for="CarId" />
+            <input type="hidden" asp-for="Discount" />
+            <input type="hidden" asp-for="FinalDiscount" />
+            <input type="hidden" asp-for="IsYoungDriver" />
+            <div>
+                <input type="submit" class="btn btn-success" value="Finalize" />
+            </div>
+        </form>
+    </div>
+</div>
+

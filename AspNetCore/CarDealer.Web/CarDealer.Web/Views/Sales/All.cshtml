@@ -1,0 +1,52 @@
+﻿@model SalesViewModel
+
+@{
+    ViewData["Title"] = $"{Model.Type}";
+}
+
+<h2>@ViewData["Title"]</h2>
+<br/>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Customer
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Discounted Price
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var sale in Model.Sales)
+    {
+        <tr>
+            <td>
+                @sale.CustomerName
+            </td>
+            <td>
+                @((((decimal)sale.Discount + (sale.IsYoungDriver ? 0.05m : 0)) * 100).ToString("F2"))%
+            </td>
+            <td>
+                @sale.Price.ToString("F2")
+            </td>
+            <td>
+                @sale.DiscountedPrice.ToString("F2")
+            </td>
+            <td class="text-center">
+                <a class="btn btn-sm btn-info" href="/sales/@sale.Id">More Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
