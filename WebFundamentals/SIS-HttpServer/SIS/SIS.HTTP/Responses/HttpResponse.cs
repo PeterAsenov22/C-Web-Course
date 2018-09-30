@@ -4,9 +4,8 @@
     using Extensions;
     using Enums;
     using Headers;
-    using Headers.Interfaces;
-    using Interfaces;
-    using System;
+    using Headers.Contracts;
+    using Contracts;
     using System.Linq;
     using System.Text;
 
@@ -44,11 +43,9 @@
             StringBuilder result = new StringBuilder();
 
             result
-                .Append($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
-                .Append(Environment.NewLine)
-                .Append(this.Headers)
-                .Append(Environment.NewLine)
-                .Append(Environment.NewLine);
+                .AppendLine($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
+                .AppendLine($"{this.Headers}")
+                .AppendLine();
 
             return result.ToString();
         }

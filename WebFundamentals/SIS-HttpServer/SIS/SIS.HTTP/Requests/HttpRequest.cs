@@ -4,8 +4,8 @@
     using Enums;
     using Exceptions;
     using Headers;
-    using Headers.Interfaces;
-    using Interfaces;
+    using Headers.Contracts;
+    using Contracts;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -54,12 +54,12 @@
                 BadRequestException.ThrowFromInvalidRequest();
             }
 
-            this.RequestMethod = this.ParseMethod(requestLine.First());
-            this.Url = requestLine[1];
-            this.Path = this.ParsePath(this.Url);
+            this.ParseRequestMethod(requestLine.First());
+            this.ParseRequestUrl(requestLine[1]);
+            this.ParseRequestPath(this.Url);
             this.ParseQuery();
 
-            this.ParseHeaders(requestLines.Skip(1).ToArray());
+            this.ParseRequestHeaders(requestLines.Skip(1).ToArray());
             this.ParseFormData(requestLines.Last());
         }
 
@@ -68,7 +68,7 @@
             return requestLine.Length == 3 && requestLine[2].ToLower() == "http/1.1";
         }
 
-        private HttpRequestMethod ParseMethod(string method)
+        private void ParseRequestMethod(string method)
         {
             HttpRequestMethod parsedMethod;
 
@@ -77,11 +77,19 @@
                 BadRequestException.ThrowFromInvalidRequest();
             }
 
-            return parsedMethod;
+            this.RequestMethod = parsedMethod;
         }
 
-        private string ParsePath(string url)
-            => url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
+        private void ParseRequestUrl(string url)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(url, nameof(url));
+            this.Url = url;
+        }
+
+        private void ParseRequestPath(string url)
+        {
+            this.Path = url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
+        }
 
         private void ParseQuery()
         {
@@ -91,14 +99,21 @@
             }
 
             var query = this.Url
-                .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
-                .Last();
+                .Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)
+                .Skip(1)
+                .Take(1)
+                .ToString();
 
             this.ParseData(query, this.QueryData);
         }
 
-        private void ParseHeaders(string[] requestHeadersLines)
+        private void ParseRequestHeaders(string[] requestHeadersLines)
         {
+            if (!requestHeadersLines.Any())
+            {
+                BadRequestException.ThrowFromInvalidRequest();
+            }
+
             var emptyLineAfterHeadersIndex = Array.IndexOf(requestHeadersLines, string.Empty);
 
             for (int i = 0; i < emptyLineAfterHeadersIndex; i++)
@@ -156,7 +171,7 @@
                 var dataKey = WebUtility.UrlDecode(dataKvp[0]);
                 var dataValue = WebUtility.UrlDecode(dataKvp[1]);
 
-                dictionary.Add(dataKey, dataValue);
+                dictionary[dataKey] = dataValue;
             }
         }
     }

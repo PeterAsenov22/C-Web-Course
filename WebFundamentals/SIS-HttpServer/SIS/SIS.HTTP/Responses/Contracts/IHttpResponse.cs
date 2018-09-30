@@ -1,8 +1,8 @@
-﻿namespace SIS.HTTP.Responses.Interfaces
+﻿namespace SIS.HTTP.Responses.Contracts
 {
     using Enums;
     using Headers;
-    using Headers.Interfaces;
+    using Headers.Contracts;
 
     public interface IHttpResponse
     {
