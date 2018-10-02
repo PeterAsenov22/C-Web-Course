@@ -1,11 +1,14 @@
 ﻿namespace SIS.HTTP.Requests
 {
+    using Cookies;
+    using Cookies.Contracts;
     using Common;
     using Enums;
     using Exceptions;
     using Headers;
     using Headers.Contracts;
     using Contracts;
+    using Sessions.Contracts;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -18,6 +21,7 @@
             this.FormData = new Dictionary<string, object>();
             this.QueryData = new Dictionary<string, object>();
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
 
             this.ParseRequest(requestString);
         }
@@ -33,6 +37,10 @@
         public IHttpHeaderCollection Headers { get; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
+
+        public IHttpCookieCollection Cookies { get; }
+
+        public IHttpSession Session { get; set; }
 
         private void ParseRequest(string requestText)
         {
@@ -60,6 +68,7 @@
             this.ParseQuery();
 
             this.ParseRequestHeaders(requestLines.Skip(1).ToArray());
+            this.ParseCookies();
             this.ParseFormData(requestLines.Last());
         }
 
@@ -137,6 +146,25 @@
             if (!this.Headers.ContainsHeader(GlobalConstants.HostHeaderKey))
             {
                 BadRequestException.ThrowFromInvalidRequest();
+            }
+        }
+
+        private void ParseCookies()
+        {
+            if (this.Headers.ContainsHeader(GlobalConstants.CookieRequestHeaderName))
+            {
+                var cookiesRaw = this.Headers.GetHeader(GlobalConstants.CookieRequestHeaderName).Value;
+                var cookies = cookiesRaw.Split(new [] {"; "}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var cookie in cookies)
+                {
+                    var cookieKeyValuePair = cookie.Split(new[] { '=' }, 2);
+                    if (cookieKeyValuePair.Length != 2)
+                    {
+                        BadRequestException.ThrowFromInvalidRequest();
+                    }
+
+                    this.Cookies.Add(new HttpCookie(cookieKeyValuePair[0], cookieKeyValuePair[1]));
+                }
             }
         }
 

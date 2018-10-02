@@ -1,10 +1,12 @@
 ﻿namespace SIS.WebServer
 {
+    using HTTP.Cookies;
     using HTTP.Enums;
     using HTTP.Requests;
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
+    using HTTP.Sessions;
     using Routing;
     using System;
     using System.Net.Sockets;
@@ -72,13 +74,44 @@
             await this.client.SendAsync(byteSegments, SocketFlags.None);
         }
 
+        private string SetRequestSession(IHttpRequest httpRequest)
+        {
+            string sessionId;
+
+            if (httpRequest.Cookies.ContainsCookie(HttpSessionStorage.SessionCookieKey))
+            {
+                var cookie = httpRequest.Cookies.GetCookie(HttpSessionStorage.SessionCookieKey);
+                sessionId = cookie.Value;
+            }
+            else
+            {
+                sessionId = Guid.NewGuid().ToString();
+            }
+
+            httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+            return sessionId;
+        }
+
+        private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
+        {
+            if (sessionId != null)
+            {
+                var sessionCookie = new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId};HttpOnly=true");
+                httpResponse.AddCookie(sessionCookie);
+            }
+        }
+
         public async Task ProcessRequestAsync()
         {
             var httpRequest = await this.ReadRequest();
 
             if (httpRequest != null)
             {
+                string sessionId = SetRequestSession(httpRequest);
+
                 var httpResponse = this.HandleRequest(httpRequest);
+
+                SetResponseSession(httpResponse, sessionId);
 
                 await this.PrepareResponse(httpResponse);
             }
