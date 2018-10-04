@@ -96,7 +96,7 @@
         {
             if (sessionId != null)
             {
-                var sessionCookie = new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId};HttpOnly=true");
+                var sessionCookie = new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId}; HttpOnly");
                 httpResponse.AddCookie(sessionCookie);
             }
         }

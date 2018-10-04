@@ -2,6 +2,7 @@
 {
     using Contracts;
     using Common;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -48,9 +49,22 @@
             return this.cookies.Any();
         }
 
+        public IEnumerator<HttpCookie> GetEnumerator()
+        {
+            foreach (var cookie in this.cookies)
+            {
+                yield return cookie.Value;
+            }
+        }
+
         public override string ToString()
         {
             return string.Join("; ", this.cookies.Values);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

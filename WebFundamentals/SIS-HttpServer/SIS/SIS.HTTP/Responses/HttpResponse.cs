@@ -58,7 +58,10 @@
 
             if (this.Cookies.HasCookies())
             {
-                result.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {this.Cookies}");
+                foreach (var httpCookie in this.Cookies)
+                {
+                    result.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {httpCookie}");
+                }
             }
 
             result.AppendLine();
