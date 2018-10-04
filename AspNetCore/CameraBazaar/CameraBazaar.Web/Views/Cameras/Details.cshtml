@@ -1,0 +1,27 @@
+﻿@model CameraFullModel
+
+@{
+    ViewData["Title"] = $"{Model.Make.ToString()} {Model.Make}";
+}
+
+<h1>@ViewData["Title"] - $@Model.Price.ToString("F2") - @(Model.Quantity > 0 ? Html.Raw(@"<span class=""text-success"">IN STOCK</span>") : Html.Raw(@"<span class=""text-danger"">OUT OF STOCK</span>") )</h1>
+<h3>Seller: @Model.Seller</h3>
+<br />
+
+<img class="camera-img" src="@Model.ImageUrl"><img />
+
+<p><span class="bold">Is Full Frame:</span> @(Model.IsFullFrame ? "Yes" : "No")</p>
+<p><span class="bold">Min Shutter Speed:</span> @Model.MinShutterSpeed"</p>
+<p><span class="bold">Max Shutter Speed:</span> 1/@Model.MaxShutterSpeed</p>
+<p><span class="bold">Min ISO:</span> @Model.MinISO.ToString()</p>
+<p><span class="bold">Max ISO:</span> @Model.MaxISO</p>
+<p><span class="bold">Video Resolution:</span> @Model.VideoResolution</p>
+<p><span class="bold">Light Metering:</span> @Model.LightMetering.ToString()</p>
+<p><span class="bold">Description:</span> @Model.Description</p>
+
+
+
+
+
+
+

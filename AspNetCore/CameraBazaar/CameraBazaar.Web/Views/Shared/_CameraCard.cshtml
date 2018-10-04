@@ -1,0 +1,21 @@
+﻿@model CameraModel
+
+<div class="card col-md-6">
+    <img class="card-img-top" src="@Model.ImageUrl" alt="Card image cap">
+    <div>
+        <h5>@Model.Make.ToString() @Model.Model</h5>
+        <p><span class="bold">Price:</span> @Model.Price</p>
+        @if (Model.Quantity > 0)
+        {
+            <p class="text-success">IN STOCK</p>
+        }
+        else
+        {
+            <p class="text-danger">OUT OF STOCK</p>
+        }
+        <p></p>
+        <a href="/cameras/details/@Model.Id" class="btn btn-primary">Details</a>
+    </div>
+</div>
+
+
