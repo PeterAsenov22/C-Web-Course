@@ -35,7 +35,7 @@
 
         public override string ToString()
         {
-            return $"{this.Key}={this.Value}; Expires={this.Expires:R}";
+            return $@"{this.Key}={this.Value}; Path=/; Expires={this.Expires:R}; HttpOnly;";
         }
     }
 }
