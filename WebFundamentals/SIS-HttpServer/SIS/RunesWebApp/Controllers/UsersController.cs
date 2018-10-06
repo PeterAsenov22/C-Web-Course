@@ -13,12 +13,10 @@
     public class UsersController : BaseController
     {
         private readonly IHashService hashService;
-        private readonly IUserCookieService userCookieService;
 
         public UsersController()
         {
             this.hashService = new HashService();
-            this.userCookieService = new UserCookieService();
         }
 
         public IHttpResponse Login()
@@ -51,7 +49,7 @@
                 return new RedirectResult("/users/login");
             }
 
-            var cookieContent = this.userCookieService.GetUserCookie(user.Username);
+            var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
 
             var response = new RedirectResult("/");
             var cookie = new HttpCookie(".auth-cookie", cookieContent, 7);
@@ -113,6 +111,16 @@
             }
 
             return new RedirectResult("/users/login");
+        }
+
+        public IHttpResponse Logout(IHttpRequest request)
+        {
+            if (!this.IsAuthenticated(request))
+            {
+                return new RedirectResult("/");
+            }
+
+            return this.LogoutUser(request);
         }
     }
 }
