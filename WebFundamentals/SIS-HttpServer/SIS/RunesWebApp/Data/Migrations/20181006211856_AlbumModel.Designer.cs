@@ -4,11 +4,14 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.EntityFrameworkCore.Metadata;
+    using Microsoft.EntityFrameworkCore.Migrations;
+    using RunesWebApp.Data;
 
     [DbContext(typeof(RunesContext))]
-    partial class RunesContextModelSnapshot : ModelSnapshot
+    [Migration("20181006211856_AlbumModel")]
+    partial class AlbumModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

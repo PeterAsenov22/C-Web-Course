@@ -1,0 +1,14 @@
+﻿<div>
+    <img src="@Model.Cover" style="width: 100px; height: 100px;" />
+    <h3>Name: @Model.Name</h3>
+    <h3>Price: $@Model.Price</h3>
+</div>
+<div>
+    <h3>Tracks</h3>
+    <hr />
+    <p><a href="/tracks/create?albumId=@Model.Id">Create Track</a></p>
+    <hr />
+    @Model.Tracks
+    <hr />
+    <p><a href="/albums/all">Back To All</a></p>
+</div>
