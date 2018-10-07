@@ -107,13 +107,16 @@
                 return;
             }
 
-            var query = this.Url
-                .Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)
-                .Skip(1)
-                .Take(1)
-                .ToString();
+            var urlParts = this.Url
+                .Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)
+                .ToArray();
 
-            this.ParseData(query, this.QueryData);
+            if (urlParts.Length !=2)
+            {
+                return;
+            }
+
+            this.ParseData(urlParts[1], this.QueryData);
         }
 
         private void ParseRequestHeaders(string[] requestHeadersLines)

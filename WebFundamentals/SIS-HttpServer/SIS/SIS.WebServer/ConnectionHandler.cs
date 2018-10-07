@@ -1,12 +1,11 @@
 ﻿namespace SIS.WebServer
 {
     using HTTP.Cookies;
-    using HTTP.Enums;
     using HTTP.Requests;
     using HTTP.Requests.Contracts;
-    using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using HTTP.Sessions;
+    using Results;
     using Routing;
     using System;
     using System.Net.Sockets;
@@ -61,7 +60,7 @@
             if (!this.serverRoutingTable.Routes.ContainsKey(request.RequestMethod)
                 || !this.serverRoutingTable.Routes[request.RequestMethod].ContainsKey(request.Path))
             {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
+                return new NotFoundResult("404 Page Not Found");
             }
 
             return this.serverRoutingTable.Routes[request.RequestMethod][request.Path].Invoke(request);
