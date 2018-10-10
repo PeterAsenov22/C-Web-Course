@@ -60,7 +60,7 @@
             {
                 foreach (var httpCookie in this.Cookies)
                 {
-                    result.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {httpCookie}");
+                    result.AppendLine($"{HttpHeader.SetCookie}: {httpCookie}");
                 }
             }
 

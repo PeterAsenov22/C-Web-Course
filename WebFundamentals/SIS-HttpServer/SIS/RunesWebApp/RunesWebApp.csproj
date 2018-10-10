@@ -19,4 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\js\" />
+    <Folder Include="Resources\css\" />
+  </ItemGroup>
+
 </Project>

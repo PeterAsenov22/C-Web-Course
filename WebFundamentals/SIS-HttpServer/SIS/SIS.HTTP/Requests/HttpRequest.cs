@@ -146,7 +146,7 @@
                 this.Headers.Add(header);
             }
 
-            if (!this.Headers.ContainsHeader(GlobalConstants.HostHeaderKey))
+            if (!this.Headers.ContainsHeader(HttpHeader.Host))
             {
                 BadRequestException.ThrowFromInvalidRequest();
             }
@@ -154,9 +154,9 @@
 
         private void ParseCookies()
         {
-            if (this.Headers.ContainsHeader(GlobalConstants.CookieRequestHeaderName))
+            if (this.Headers.ContainsHeader(HttpHeader.Cookie))
             {
-                var cookiesRaw = this.Headers.GetHeader(GlobalConstants.CookieRequestHeaderName).Value;
+                var cookiesRaw = this.Headers.GetHeader(HttpHeader.Cookie).Value;
                 var cookies = cookiesRaw.Split(new [] {"; "}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var cookie in cookies)
                 {

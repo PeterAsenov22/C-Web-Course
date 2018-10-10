@@ -1,6 +1,11 @@
-﻿namespace SIS.WebServer
+﻿using System.IO;
+using SIS.HTTP.Enums;
+using SIS.HTTP.Responses;
+
+namespace SIS.WebServer
 {
     using HTTP.Cookies;
+    using HTTP.Common;
     using HTTP.Requests;
     using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
@@ -8,6 +13,7 @@
     using Results;
     using Routing;
     using System;
+    using System.Linq;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
@@ -17,6 +23,8 @@
         private readonly Socket client;
 
         private readonly ServerRoutingTable serverRoutingTable;
+
+        private const string RootDirectoryRelativePath = "../../../";
 
         public ConnectionHandler(Socket client, ServerRoutingTable serverRoutingTable)
         {
@@ -57,6 +65,12 @@
 
         private IHttpResponse HandleRequest(IHttpRequest request)
         {
+            var response = this.TryHandleResourceRequest(request);
+            if (response != null)
+            {
+                return response;
+            }
+
             if (!this.serverRoutingTable.Routes.ContainsKey(request.RequestMethod)
                 || !this.serverRoutingTable.Routes[request.RequestMethod].ContainsKey(request.Path))
             {
@@ -64,6 +78,25 @@
             }
 
             return this.serverRoutingTable.Routes[request.RequestMethod][request.Path].Invoke(request);
+        }
+
+        private IHttpResponse TryHandleResourceRequest(IHttpRequest request)
+        {
+            var requestPath = request.Path;
+            if (requestPath.Contains("."))
+            {
+                var filePath = $"{RootDirectoryRelativePath}Resources{requestPath}";
+                if (!File.Exists(filePath))
+                {
+                    return new HttpResponse(HttpResponseStatusCode.NotFound);
+                }
+
+                var fileContent = File.ReadAllBytes(filePath);
+
+                return new InlineResourceResult(fileContent);
+            }
+
+            return null;
         }
 
         private async Task PrepareResponse(IHttpResponse response)
