@@ -29,13 +29,13 @@
 
             if (albums.Length == 0)
             {
-                albumsHtml = "<p>There are currently no albums.</p>";
+                albumsHtml = @"<p class=""text-warning"">There are currently no albums.</p>";
             }
             else
             {
                 foreach (var album in albums)
                 {
-                    albumsHtml += $@"<div><a href=""/albums/details?id={album.Id}"">{album.Name}</a></div>";
+                    albumsHtml += $@"<div><a class=""font-weight-bold"" href=""/albums/details?id={album.Id}"">{album.Name}</a></div>";
                 }
             }
 
@@ -107,7 +107,7 @@
             string tracksHtml = string.Empty;
             if (!album.Tracks.Any())
             {
-                tracksHtml += "<p>There are currently no tracks.</p>";
+                tracksHtml += @"<p class=""text-warning"">There are currently no tracks.</p>";
             }
             else
             {
@@ -116,7 +116,7 @@
                 for (int i = 0; i < tracks.Length; i++)
                 {
                     var currTrack = tracks[i];
-                    tracksHtml += $@"<li> {i+1}. <a href=""/tracks/details?albumId={album.Id}&trackId={currTrack.Id}"">{currTrack.Name}</a></li>";
+                    tracksHtml += $@"<li> <span class=""font-weight-bold"">{i + 1}</span>. <a class=""font-italic"" href=""/tracks/details?albumId={album.Id}&trackId={currTrack.Id}"">{currTrack.Name}</a></li>";
                 }
 
                 tracksHtml += "</ul>";

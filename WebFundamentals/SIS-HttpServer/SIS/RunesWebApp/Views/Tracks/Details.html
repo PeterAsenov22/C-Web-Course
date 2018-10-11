@@ -1,5 +1,13 @@
-﻿<iframe width="200" height="200" src="@Model.Link" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-<h3>Name: @Model.Name</h3>
-<h3>Price: $@Model.Price</h3>
-<hr/>
-<p><a href="/albums/details?id=@Model.AlbumId">Back To Album</a></p>
+﻿<div class="row">
+   <div class="col-md-3"></div>
+   <div class="col-md-6 text-center">
+       <h3 class="font-weight-bold">Track Name: @Model.Name</h3>
+       <h3 class="font-weight-bold">Track Price: $@Model.Price</h3>
+       <div class="top-border-line primary-separator"></div>
+       <div class="embed-responsive embed-responsive-16by9">
+           <iframe class="embed-responsive-item" src="@Model.Link" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+       </div>
+       <div class="bottom-border-line primary-separator"></div>
+       <a class="btn btn-success" href="/albums/details?id=@Model.AlbumId">Back To Album</a>
+   </div>
+</div>

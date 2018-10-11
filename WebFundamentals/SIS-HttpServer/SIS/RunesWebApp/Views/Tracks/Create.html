@@ -1,18 +1,40 @@
-﻿<h1>Create Track</h1>
-<hr />
-<form method="post">
-    <div>
-        Name: <input type="text" name="name" placeholder="Name..." />
+﻿<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <h1 class="text-green text-center">Create Track</h1>
+        <div class="top-border-line primary-separator"></div>
+        <form method="post">
+            <div class="form-group">
+                <label class="col-sm-2" for="name">Name</label>
+                <div class="col-sm-10 col-md-12">
+                    <input type="text" class="form-control" id="name" placeholder="Name..." name="name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label class="col-sm-2" for="link">Link</label>
+                    <div class="col-sm-10 col-md-10">
+                        <input type="text" class="form-control" id="link" placeholder="Link..." name="link">
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-sm-2" for="cover">Price</label>
+                    <div class="col-sm-10 col-md-10">
+                        <input type="text" class="form-control" id="price" placeholder="Price..." name="price">
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-border-line primary-separator"></div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <input type="submit" class="btn btn-success" value="Create" />
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <a class="btn btn-success" href="/albums/details?id=@Model.AlbumId">Back To Album</a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-    <div>
-        Link: <input type="text" name="link" placeholder="Link..." />
-    </div>
-    <div>
-        Price: <input type="text" name="price" placeholder="Price..." />
-    </div>
-    <div>
-        <input type="submit" value="Create" />
-    </div>
-</form>
-<hr />
-<p><a href="/albums/details?id=@Model.AlbumId">Back To Album</a></p>
+</div>

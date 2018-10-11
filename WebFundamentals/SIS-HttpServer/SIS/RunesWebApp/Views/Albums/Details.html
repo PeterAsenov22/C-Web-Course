@@ -1,14 +1,20 @@
-﻿<div>
-    <img src="@Model.Cover" style="width: 100px; height: 100px;" />
-    <h3>Name: @Model.Name</h3>
-    <h3>Price: $@Model.Price</h3>
-</div>
-<div>
-    <h3>Tracks</h3>
-    <hr />
-    <p><a href="/tracks/create?albumId=@Model.Id">Create Track</a></p>
-    <hr />
-    @Model.Tracks
-    <hr />
-    <p><a href="/albums/all">Back To All</a></p>
+﻿<div class="row">
+    <div class="col-md-4">
+        <img class="img-fluid" src="@Model.Cover" />
+        <h3 class="font-weight-bold text-center">Album Name: @Model.Name</h3>
+        <h3 class="font-weight-bold text-center">Album Price: $@Model.Price</h3>
+        <div class="row">
+            <div class="col-md-9">
+                <a class="btn btn-success" href="/tracks/create?albumId=@Model.Id">Create Track</a>
+            </div>
+            <div>
+                <a class="btn btn-success" href="/albums/all">Back To All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-2">
+        <h3 class="font-weight-bold bottom-buffer-md text-center">Tracks</h3>
+        @Model.Tracks
+    </div>
 </div>
