@@ -3,6 +3,7 @@
     using Controllers;
     using SIS.HTTP.Enums;
     using SIS.WebServer;
+    using SIS.WebServer.Api;
     using SIS.WebServer.Routing;
     using SIS.WebServer.Results;
 
@@ -11,6 +12,7 @@
         public static void Main()
         {
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
+            IHttpHandler handler = new HttpHandler(serverRoutingTable);
 
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/home/index"] = request => new RedirectResult("/");
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/"] = request => new HomeController().Index(request);
@@ -28,7 +30,7 @@
             serverRoutingTable.Routes[HttpRequestMethod.Post]["/albums/create"] = request => new AlbumsController().CreatePost(request);
             serverRoutingTable.Routes[HttpRequestMethod.Post]["/tracks/create"] = request => new TracksController().CreatePost(request);
 
-            Server server = new Server(8000, serverRoutingTable);
+            Server server = new Server(8000, handler);
             server.Run();
         }
     }

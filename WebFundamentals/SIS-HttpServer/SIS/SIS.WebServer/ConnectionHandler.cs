@@ -1,19 +1,12 @@
-﻿using System.IO;
-using SIS.HTTP.Enums;
-using SIS.HTTP.Responses;
-
-namespace SIS.WebServer
+﻿namespace SIS.WebServer
 {
+    using Api;
     using HTTP.Cookies;
-    using HTTP.Common;
     using HTTP.Requests;
     using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
     using HTTP.Sessions;
-    using Results;
-    using Routing;
     using System;
-    using System.Linq;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
@@ -22,14 +15,12 @@ namespace SIS.WebServer
     {
         private readonly Socket client;
 
-        private readonly ServerRoutingTable serverRoutingTable;
+        private readonly IHttpHandler handler;
 
-        private const string RootDirectoryRelativePath = "../../../";
-
-        public ConnectionHandler(Socket client, ServerRoutingTable serverRoutingTable)
+        public ConnectionHandler(Socket client, IHttpHandler handler)
         {
             this.client = client;
-            this.serverRoutingTable = serverRoutingTable;
+            this.handler = handler;
         }
 
         private async Task<IHttpRequest> ReadRequest()
@@ -61,42 +52,6 @@ namespace SIS.WebServer
             }
 
             return new HttpRequest(result.ToString());
-        }
-
-        private IHttpResponse HandleRequest(IHttpRequest request)
-        {
-            var response = this.TryHandleResourceRequest(request);
-            if (response != null)
-            {
-                return response;
-            }
-
-            if (!this.serverRoutingTable.Routes.ContainsKey(request.RequestMethod)
-                || !this.serverRoutingTable.Routes[request.RequestMethod].ContainsKey(request.Path))
-            {
-                return new NotFoundResult("404 Page Not Found");
-            }
-
-            return this.serverRoutingTable.Routes[request.RequestMethod][request.Path].Invoke(request);
-        }
-
-        private IHttpResponse TryHandleResourceRequest(IHttpRequest request)
-        {
-            var requestPath = request.Path;
-            if (requestPath.Contains("."))
-            {
-                var filePath = $"{RootDirectoryRelativePath}Resources{requestPath}";
-                if (!File.Exists(filePath))
-                {
-                    return new HttpResponse(HttpResponseStatusCode.NotFound);
-                }
-
-                var fileContent = File.ReadAllBytes(filePath);
-
-                return new InlineResourceResult(fileContent);
-            }
-
-            return null;
         }
 
         private async Task PrepareResponse(IHttpResponse response)
@@ -141,7 +96,7 @@ namespace SIS.WebServer
             {
                 string sessionId = SetRequestSession(httpRequest);
 
-                var httpResponse = this.HandleRequest(httpRequest);
+                var httpResponse = this.handler.Handle(httpRequest);
 
                 SetResponseSession(httpResponse, sessionId);
 

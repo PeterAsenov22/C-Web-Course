@@ -16,7 +16,7 @@
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer("Server=DESKTOP-9TBAQKA\\SQLEXPRESS;Database=Runes;Integrated Security=true;")
+                .UseSqlServer("Server=.;Database=Runes;Integrated Security=true;")
                 .UseLazyLoadingProxies();
         }
 
