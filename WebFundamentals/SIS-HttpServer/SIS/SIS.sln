@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIS.WebServer", "SIS.WebSer
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{86EF1032-13D6-4DA0-AABD-3CD83D2A3DA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunesWebApp", "RunesWebApp\RunesWebApp.csproj", "{4878A38B-875F-4A27-BF84-455821949036}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RunesWebApp", "RunesWebApp\RunesWebApp.csproj", "{4878A38B-875F-4A27-BF84-455821949036}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIS.Framework", "SIS.Framework\SIS.Framework.csproj", "{983C0BE4-CD43-4766-9483-01CFDA175D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{4878A38B-875F-4A27-BF84-455821949036}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4878A38B-875F-4A27-BF84-455821949036}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4878A38B-875F-4A27-BF84-455821949036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{983C0BE4-CD43-4766-9483-01CFDA175D4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{983C0BE4-CD43-4766-9483-01CFDA175D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{983C0BE4-CD43-4766-9483-01CFDA175D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{983C0BE4-CD43-4766-9483-01CFDA175D4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
