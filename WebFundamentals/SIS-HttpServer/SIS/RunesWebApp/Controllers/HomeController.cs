@@ -1,22 +1,23 @@
 ﻿namespace RunesWebApp.Controllers
 {
     using System.Collections.Generic;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.HTTP.Requests.Contracts;
+    using SIS.Framework.ActionResults.Contracts;
 
     public class HomeController : BaseController
     {
-        public IHttpResponse Index(IHttpRequest request)
+        public IActionResult Index()
         {
-            if (this.IsAuthenticated(request))
+            if (this.IsAuthenticated())
             {
-                var username = this.GetUsername(request);
+                var username = this.GetUsername();
                 var viewBag = new Dictionary<string, string>();
                 viewBag.Add("Username", username);
-                return View("IndexAuthenticated", viewBag, true);
+
+                string authViewName = "IndexAuthenticated";
+                return View(authViewName, viewBag, "AuthLayout");
             }
             
-            return View("IndexAnonymous");
+            return View();
         }
     }
 }

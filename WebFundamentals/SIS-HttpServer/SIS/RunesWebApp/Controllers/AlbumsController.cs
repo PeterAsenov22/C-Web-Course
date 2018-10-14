@@ -1,22 +1,22 @@
 ﻿namespace RunesWebApp.Controllers
 {
     using Models;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.WebServer.Results;
+    using SIS.Framework.ActionResults.Contracts;
+    using SIS.Framework.Attributes;
+    using SIS.Framework.Attributes.Methods;
     using System.Collections.Generic;
     using System.Linq;  
 
     public class AlbumsController : BaseController
     {
-        public IHttpResponse All(IHttpRequest request)
+        public IActionResult All()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            var albums = this.Context
+            var albums = this.Db
                 .Albums
                 .Select(a => new
                 {
@@ -42,28 +42,30 @@
             var viewBag = new Dictionary<string, string>();
             viewBag.Add("Albums", albumsHtml);
 
-            return View("All", viewBag, true);
+            return View("All", viewBag, "AuthLayout");
         }
 
-        public IHttpResponse Create(IHttpRequest request)
+        public IActionResult Create()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            return View("Create", null, true);
+            return View("Create", null, "AuthLayout");
         }
 
-        public IHttpResponse CreatePost(IHttpRequest request)
+        [HttpPost]
+        [Route("/create")]
+        public IActionResult CreatePost()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            var albumName = request.FormData["name"].ToString();
-            var cover = request.FormData["cover"].ToString();
+            var albumName = this.Request.FormData["name"].ToString();
+            var cover = this.Request.FormData["cover"].ToString();
 
             var album = new Album
             {
@@ -71,37 +73,37 @@
                 Cover = cover
             };
 
-            this.Context.Albums.Add(album);
-            this.Context.SaveChanges();
+            this.Db.Albums.Add(album);
+            this.Db.SaveChanges();
 
-            return new RedirectResult("/albums/all");
+            return this.RedirectToAction("/albums/all");
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        public IActionResult Details()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            if (!request.QueryData.ContainsKey("id"))
+            if (!this.Request.QueryData.ContainsKey("id"))
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            var albumId = request.QueryData["id"].ToString();
+            var albumId = this.Request.QueryData["id"].ToString();
             if (albumId is null)
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            var album = this.Context
+            var album = this.Db
                 .Albums
                 .FirstOrDefault(a => a.Id == albumId);
 
             if (album is null)
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
             string tracksHtml = string.Empty;
@@ -129,7 +131,7 @@
             viewBag.Add("Price", album.Price.ToString("F2"));
             viewBag.Add("Tracks", tracksHtml);
 
-            return View("Details", viewBag, true);
+            return View("Details", viewBag, "AuthLayout");
         }
     }
 }

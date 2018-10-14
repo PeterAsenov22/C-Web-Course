@@ -1,12 +1,12 @@
 ﻿namespace RunesWebApp.Controllers
 {
     using Models;
-    using Services;
-    using Services.Implementations;
+    using SIS.Framework.ActionResults.Contracts;
+    using SIS.Framework.Attributes;
+    using SIS.Framework.Attributes.Methods;
+    using SIS.Framework.Services;
+    using SIS.Framework.Services.Implementations;
     using SIS.HTTP.Cookies;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.HTTP.Requests.Contracts; 
-    using SIS.WebServer.Results;
     using System;
     using System.Linq;
 
@@ -19,75 +19,83 @@
             this.hashService = new HashService();
         }
 
-        public IHttpResponse Login()
+        public IActionResult Login()
         {
             return View();
         }
 
-        public IHttpResponse Register()
+        public IActionResult Register()
         {
             return View();
         }
 
-        public IHttpResponse Login(IHttpRequest request)
+        [HttpPost]
+        [Route("/login")]
+        public IActionResult DoLogin()
         {
-            var username = request.FormData["username"].ToString();
-            var password = request.FormData["password"].ToString();
+            var username = this.Request.FormData["username"].ToString();
+            var password = this.Request.FormData["password"].ToString();
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
             var hashedPassword = this.hashService.Hash(password);
-            var user = this.Context
+            var user = this.Db
                 .Users
                 .FirstOrDefault(u => u.Username == username && u.HashedPassword == hashedPassword);
 
             if (user is null)
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
             var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
 
-            var response = new RedirectResult("/");
             var cookie = new HttpCookie(".auth-cookie", cookieContent, 7);
-            response.Cookies.Add(cookie);
+            this.Response.Cookies.Add(cookie);
 
-            return response;
+            return this.RedirectToAction("/");
         }
 
-        public IHttpResponse Register(IHttpRequest request)
+        [HttpPost]
+        [Route("/register")]
+        public IActionResult DoRegister()
         {
-            var username = request.FormData["username"].ToString();
-            var email = request.FormData["email"].ToString();
-            var password = request.FormData["password"].ToString();
-            var confirmPassword = request.FormData["confirmPassword"].ToString();
+            var username = this.Request.FormData["username"].ToString();
+            var email = this.Request.FormData["email"].ToString();
+            var password = this.Request.FormData["password"].ToString();
+            var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
 
             if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
             {
-                return new BadRequestResult("<h1>Please provide valid username with length of 4 or more characters.</h1>");
+                return this.View();
+                // return new BadRequestResult("<h1>Please provide valid username with length of 4 or more characters.</h1>");
             }
 
             if (string.IsNullOrWhiteSpace(email) || email.Length < 4)
             {
-                return new BadRequestResult("<h1>Please provide valid email with length of 4 or more characters.</h1>");
+                return this.View();
+                // return new BadRequestResult("<h1>Please provide valid email with length of 4 or more characters.</h1>");
             }
 
-            if (this.Context.Users.Any(x => x.Username == username))
+            if (this.Db.Users.Any(x => x.Username == username))
             {
-                return new BadRequestResult("User with the same name already exists.");
+                return this.View();
+                // return new BadRequestResult("User with the same name already exists.");
             }
 
             if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
             {
-                return new BadRequestResult("Please provide password of length 6 or more.");
+                return this.View();
+                // return new BadRequestResult("Please provide password of length 6 or more.");
             }
 
             if (password != confirmPassword)
             {
-                return new BadRequestResult("Passwords do not match.");
+                return this.View();
+                // return new BadRequestResult("Passwords do not match.");
             }
 
             var hashedPassword = this.hashService.Hash(password);
@@ -99,28 +107,29 @@
                 HashedPassword = hashedPassword
             };
 
-            this.Context.Users.Add(user);
+            this.Db.Users.Add(user);
 
             try
             {
-                this.Context.SaveChanges();
+                this.Db.SaveChanges();
             }
             catch (Exception)
             {
-                return new RedirectResult("/users/register");
+                return this.RedirectToAction("/users/register");
             }
 
-            return new RedirectResult("/users/login");
+            return this.RedirectToAction("/users/login");
         }
 
-        public IHttpResponse Logout(IHttpRequest request)
+        public IActionResult Logout()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/");
+                return this.RedirectToAction("/");
             }
 
-            return this.LogoutUser(request);
+            this.LogoutUser();
+            return this.RedirectToAction("/");
         }
     }
 }

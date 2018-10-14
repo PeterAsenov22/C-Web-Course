@@ -1,49 +1,51 @@
 ﻿namespace RunesWebApp.Controllers
 {
     using Models;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
+    using SIS.Framework.ActionResults.Contracts;
+    using SIS.Framework.Attributes;
+    using SIS.Framework.Attributes.Methods;
     using System.Linq;
     using System.Collections.Generic;
 
     public class TracksController : BaseController
     {
-        public IHttpResponse Create(IHttpRequest request)
+        public IActionResult Create()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            if (!request.QueryData.ContainsKey("albumId"))
+            if (!this.Request.QueryData.ContainsKey("albumId"))
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            var albumId = request.QueryData["albumId"].ToString();
+            var albumId = this.Request.QueryData["albumId"].ToString();
             var viewBag = new Dictionary<string, string>();
             viewBag.Add("AlbumId", albumId);
 
-            return View("Create", viewBag, true);
+            return View("Create", viewBag, "AuthLayout");
         }
 
-        public IHttpResponse CreatePost(IHttpRequest request)
+        [HttpPost]
+        [Route("/create")]
+        public IActionResult CreatePost()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            if (!request.QueryData.ContainsKey("albumId"))
+            if (!this.Request.QueryData.ContainsKey("albumId"))
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            var albumId = request.QueryData["albumId"].ToString();
-            var name = request.FormData["name"].ToString();
-            var link = request.FormData["link"].ToString();
-            var price = request.FormData["price"].ToString();
+            var albumId = this.Request.QueryData["albumId"].ToString();
+            var name = this.Request.FormData["name"].ToString();
+            var link = this.Request.FormData["link"].ToString();
+            var price = this.Request.FormData["price"].ToString();
 
             var track = new Track
             {
@@ -52,42 +54,42 @@
                 Price = decimal.Parse(price)
             };
 
-            var album = this.Context.Albums.FirstOrDefault(a => a.Id == albumId);
+            var album = this.Db.Albums.FirstOrDefault(a => a.Id == albumId);
             if (album is null)
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
             album.Tracks.Add(track);
-            this.Context.SaveChanges();
+            this.Db.SaveChanges();
 
-            return new RedirectResult($"/albums/details?id={album.Id}");
+            return this.RedirectToAction($"/albums/details?id={album.Id}");
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        public IActionResult Details()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            if (!request.QueryData.ContainsKey("albumId"))
+            if (!this.Request.QueryData.ContainsKey("albumId"))
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            if (!request.QueryData.ContainsKey("trackId"))
+            if (!this.Request.QueryData.ContainsKey("trackId"))
             {
-                return new RedirectResult("/albums/all");
+                return this.RedirectToAction("/albums/all");
             }
 
-            var albumId = request.QueryData["albumId"].ToString();
-            var trackId = request.QueryData["trackId"].ToString();
+            var albumId = this.Request.QueryData["albumId"].ToString();
+            var trackId = this.Request.QueryData["trackId"].ToString();
 
-            var track = this.Context.Tracks.FirstOrDefault(t => t.Id == trackId);
+            var track = this.Db.Tracks.FirstOrDefault(t => t.Id == trackId);
             if (track is null)
             {
-                return new RedirectResult($"/albums/details?id={albumId}");
+                return this.RedirectToAction($"/albums/details?id={albumId}");
             }
 
             var viewBag = new Dictionary<string, string>();
@@ -96,7 +98,7 @@
             viewBag.Add("Link", track.Link);
             viewBag.Add("AlbumId", albumId);
 
-            return View("Details", viewBag, true);
+            return View("Details", viewBag, "AuthLayout");
         }
     }
 }
