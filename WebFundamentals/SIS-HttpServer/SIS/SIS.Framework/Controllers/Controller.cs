@@ -45,21 +45,6 @@
             return new ViewResult(view);
         }
 
-        protected IViewable View(IDictionary<string, string> viewBag)
-        {
-            return this.View(string.Empty, viewBag, string.Empty);
-        }
-
-        protected IViewable View(IDictionary<string, string> viewBag, string layoutName)
-        {
-            return this.View(string.Empty, viewBag, string.Empty);
-        }
-
-        protected IViewable View(string actionName, string layoutName)
-        {
-            return this.View(actionName, null, layoutName);
-        }
-
         protected IRedirectable RedirectToAction(string redirectUrl)
         {
             return new RedirectResult(redirectUrl);
@@ -88,12 +73,11 @@
             return userName;
         }
 
-        protected IActionResult LogoutUser()
+        protected void LogoutUser()
         {
             var cookie = this.Request.Cookies.GetCookie(AuthCookieHeader);
             cookie.Delete();
             this.Response.Cookies.Add(cookie);
-            return this.RedirectToAction("/");
         }
     }
 }

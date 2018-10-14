@@ -1,15 +1,18 @@
 ﻿namespace SIS.Framework.Routers
 {  
     using ActionResults.Contracts;
+    using Attributes;
     using Attributes.Methods;
     using Controllers;
     using HTTP.Enums;
+    using HTTP.Extensions;
     using HTTP.Headers;
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -20,6 +23,12 @@
     {
         public IHttpResponse Handle(IHttpRequest request)
         {
+            var response = this.TryHandleResourceRequest(request);
+            if (response != null)
+            {
+                return response;
+            }
+
             var controllerName = string.Empty;
             var actionName = string.Empty;
             var requestMethod = request.RequestMethod.ToString();
@@ -31,12 +40,12 @@
             }
             else
             {
-                var requestUrlSplit = request.Url.Split(
+                var requestUrlSplit = request.Path.Split(
                     new [] {"/"},
                     StringSplitOptions.RemoveEmptyEntries);
 
-                controllerName = requestUrlSplit[0];
-                actionName = requestUrlSplit[1];
+                controllerName = requestUrlSplit[0].Capitalize();
+                actionName = requestUrlSplit[1].Capitalize();
             }
 
             var controller = this.GetController(controllerName);
@@ -64,15 +73,35 @@
                 response.Content = Encoding.UTF8.GetBytes(invocationResult);
                 response.StatusCode = HttpResponseStatusCode.Ok;
                 return response;
-                //return new HtmlResult(invocationResult, HttpResponseStatusCode.Ok);
             }
 
             if (actionResult is IRedirectable)
             {
-                return new RedirectResult(invocationResult);
+                response.StatusCode = HttpResponseStatusCode.SeeOther;
+                response.Headers.Add(new HttpHeader(HttpHeader.Location, invocationResult));
+                return response;
             }
 
             throw new InvalidOperationException("The view result is not supported.");
+        }
+
+        private IHttpResponse TryHandleResourceRequest(IHttpRequest request)
+        {
+            var requestPath = request.Path;
+            if (requestPath.Contains("."))
+            {
+                var filePath = $"{MvcContext.Get.RootDirectoryRelativePath}Resources{requestPath}";
+                if (!File.Exists(filePath))
+                {
+                    return new HttpResponse(HttpResponseStatusCode.NotFound);
+                }
+
+                var fileContent = File.ReadAllBytes(filePath);
+
+                return new InlineResourceResult(fileContent);
+            }
+
+            return null;
         }
 
         private MethodInfo GetAction(
@@ -124,10 +153,21 @@
                 return new MethodInfo[0];
             }
 
+            var routeMethods = controller
+                .GetType()
+                .GetMethods()
+                .Where(mi =>
+                    mi.GetCustomAttributes()
+                        .Where(ca => ca is RouteAttribute)
+                        .Cast<RouteAttribute>()
+                        .Any(a => a.Path == $"/{actionName.ToLower()}"));
+
+            
             return controller
                .GetType()
                .GetMethods()
-               .Where(mi => mi.Name.ToLower() == actionName.ToLower());
+               .Where(mi => mi.Name.ToLower() == actionName.ToLower())
+               .Union(routeMethods);
         }
 
         private Controller GetController(string controllerName)
