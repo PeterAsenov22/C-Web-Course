@@ -9,7 +9,7 @@
         {
             if (this.IsAuthenticated())
             {
-                var username = this.GetUsername();
+                var username = this.User;
                 var viewBag = new Dictionary<string, string>();
                 viewBag.Add("Username", username);
 

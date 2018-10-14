@@ -60,17 +60,20 @@
             return false;
         }
 
-        protected string GetUsername()
+        protected string User
         {
-            if (!this.IsAuthenticated())
+            get
             {
-                return null;
-            }
+                if (!this.IsAuthenticated())
+                {
+                    return null;
+                }
 
-            var cookie = this.Request.Cookies.GetCookie(AuthCookieHeader);
-            var cookieContent = cookie.Value;
-            var userName = this.UserCookieService.GetUserData(cookieContent);
-            return userName;
+                var cookie = this.Request.Cookies.GetCookie(AuthCookieHeader);
+                var cookieContent = cookie.Value;
+                var userName = this.UserCookieService.GetUserData(cookieContent);
+                return userName;
+            }
         }
 
         protected void LogoutUser()
