@@ -2,9 +2,9 @@
 {
     using Models;
     using SIS.Framework.ActionResults.Contracts;
-    using SIS.Framework.Attributes;
     using SIS.Framework.Attributes.Methods;
-    using System.Linq;  
+    using System.Linq;
+    using ViewModels.Albums;
 
     public class AlbumsController : BaseController
     {
@@ -54,21 +54,17 @@
         }
 
         [HttpPost]
-        [Route("/create")]
-        public IActionResult CreatePost()
+        public IActionResult Create(CreateViewModel model)
         {
             if (!this.IsAuthenticated())
             {
                 return this.RedirectToAction("/users/login");
             }
 
-            var albumName = this.Request.FormData["name"].ToString();
-            var cover = this.Request.FormData["cover"].ToString();
-
             var album = new Album
             {
-                Name = albumName,
-                Cover = cover
+                Name = model.Name,
+                Cover = model.Cover
             };
 
             this.Db.Albums.Add(album);
@@ -77,27 +73,21 @@
             return this.RedirectToAction("/albums/all");
         }
 
-        public IActionResult Details()
+        public IActionResult Details(string id)
         {
             if (!this.IsAuthenticated())
             {
                 return this.RedirectToAction("/users/login");
             }
 
-            if (!this.Request.QueryData.ContainsKey("id"))
-            {
-                return this.RedirectToAction("/albums/all");
-            }
-
-            var albumId = this.Request.QueryData["id"].ToString();
-            if (albumId is null)
+            if (id is null)
             {
                 return this.RedirectToAction("/albums/all");
             }
 
             var album = this.Db
                 .Albums
-                .FirstOrDefault(a => a.Id == albumId);
+                .FirstOrDefault(a => a.Id == id);
 
             if (album is null)
             {

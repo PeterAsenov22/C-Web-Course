@@ -2,13 +2,14 @@
 {
     using Models;
     using SIS.Framework.ActionResults.Contracts;
-    using SIS.Framework.Attributes;
     using SIS.Framework.Attributes.Methods;
     using SIS.Framework.Services;
     using SIS.Framework.Services.Implementations;
     using SIS.HTTP.Cookies;
     using System;
     using System.Linq;
+    using ViewModels;
+    using ViewModels.Users;
 
     public class UsersController : BaseController
     {
@@ -30,21 +31,17 @@
         }
 
         [HttpPost]
-        [Route("/login")]
-        public IActionResult DoLogin()
+        public IActionResult Login(LoginViewModel model)
         {
-            var username = this.Request.FormData["username"].ToString();
-            var password = this.Request.FormData["password"].ToString();
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
             {
                 return this.RedirectToAction("/users/login");
             }
 
-            var hashedPassword = this.hashService.Hash(password);
+            var hashedPassword = this.hashService.Hash(model.Password);
             var user = this.Db
                 .Users
-                .FirstOrDefault(u => u.Username == username && u.HashedPassword == hashedPassword);
+                .FirstOrDefault(u => u.Username == model.Username && u.HashedPassword == hashedPassword);
 
             if (user is null)
             {
@@ -60,50 +57,44 @@
         }
 
         [HttpPost]
-        [Route("/register")]
-        public IActionResult DoRegister()
+        public IActionResult Register(RegisterViewModel model)
         {
-            var username = this.Request.FormData["username"].ToString();
-            var email = this.Request.FormData["email"].ToString();
-            var password = this.Request.FormData["password"].ToString();
-            var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
-
-            if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
+            if (string.IsNullOrWhiteSpace(model.Username) || model.Username.Length < 4)
             {
                 return this.View();
                 // return new BadRequestResult("<h1>Please provide valid username with length of 4 or more characters.</h1>");
             }
 
-            if (string.IsNullOrWhiteSpace(email) || email.Length < 4)
+            if (string.IsNullOrWhiteSpace(model.Email) || model.Email.Length < 4)
             {
                 return this.View();
                 // return new BadRequestResult("<h1>Please provide valid email with length of 4 or more characters.</h1>");
             }
 
-            if (this.Db.Users.Any(x => x.Username == username))
+            if (this.Db.Users.Any(x => x.Username == model.Username))
             {
                 return this.View();
                 // return new BadRequestResult("User with the same name already exists.");
             }
 
-            if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+            if (string.IsNullOrWhiteSpace(model.Password) || model.Password.Length < 6)
             {
                 return this.View();
                 // return new BadRequestResult("Please provide password of length 6 or more.");
             }
 
-            if (password != confirmPassword)
+            if (model.Password != model.ConfirmPassword)
             {
                 return this.View();
                 // return new BadRequestResult("Passwords do not match.");
             }
 
-            var hashedPassword = this.hashService.Hash(password);
+            var hashedPassword = this.hashService.Hash(model.Password);
 
             var user = new User
             {
-                Username = username,
-                Email = email,
+                Username = model.Username,
+                Email = model.Email,
                 HashedPassword = hashedPassword
             };
 

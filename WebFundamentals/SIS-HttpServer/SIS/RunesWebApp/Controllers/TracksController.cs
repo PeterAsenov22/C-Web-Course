@@ -2,9 +2,9 @@
 {
     using Models;
     using SIS.Framework.ActionResults.Contracts;
-    using SIS.Framework.Attributes;
     using SIS.Framework.Attributes.Methods;
     using System.Linq;
+    using ViewModels.Tracks;
 
     public class TracksController : BaseController
     {
@@ -27,8 +27,7 @@
         }
 
         [HttpPost]
-        [Route("/create")]
-        public IActionResult CreatePost()
+        public IActionResult Create(CreateViewModel model)
         {
             if (!this.IsAuthenticated())
             {
@@ -40,19 +39,14 @@
                 return this.RedirectToAction("/albums/all");
             }
 
-            var albumId = this.Request.QueryData["albumId"].ToString();
-            var name = this.Request.FormData["name"].ToString();
-            var link = this.Request.FormData["link"].ToString();
-            var price = this.Request.FormData["price"].ToString();
-
             var track = new Track
             {
-                Name = name,
-                Link = link,
-                Price = decimal.Parse(price)
+                Name = model.Name,
+                Link = model.Link,
+                Price = model.Price
             };
 
-            var album = this.Db.Albums.FirstOrDefault(a => a.Id == albumId);
+            var album = this.Db.Albums.FirstOrDefault(a => a.Id == model.AlbumId);
             if (album is null)
             {
                 return this.RedirectToAction("/albums/all");
@@ -64,7 +58,7 @@
             return this.RedirectToAction($"/albums/details?id={album.Id}");
         }
 
-        public IActionResult Details()
+        public IActionResult Details(string albumId, string trackId)
         {
             if (!this.IsAuthenticated())
             {
@@ -80,9 +74,6 @@
             {
                 return this.RedirectToAction("/albums/all");
             }
-
-            var albumId = this.Request.QueryData["albumId"].ToString();
-            var trackId = this.Request.QueryData["trackId"].ToString();
 
             var track = this.Db.Tracks.FirstOrDefault(t => t.Id == trackId);
             if (track is null)
