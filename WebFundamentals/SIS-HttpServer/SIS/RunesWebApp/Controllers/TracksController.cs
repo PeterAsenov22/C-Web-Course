@@ -5,7 +5,6 @@
     using SIS.Framework.Attributes;
     using SIS.Framework.Attributes.Methods;
     using System.Linq;
-    using System.Collections.Generic;
 
     public class TracksController : BaseController
     {
@@ -22,10 +21,9 @@
             }
 
             var albumId = this.Request.QueryData["albumId"].ToString();
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("AlbumId", albumId);
+            this.ViewBag["AlbumId"] = albumId;
 
-            return View("Create", viewBag, "AuthLayout");
+            return View("Create", "AuthLayout");
         }
 
         [HttpPost]
@@ -92,13 +90,12 @@
                 return this.RedirectToAction($"/albums/details?id={albumId}");
             }
 
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Name", track.Name);
-            viewBag.Add("Price", track.Price.ToString("F2"));
-            viewBag.Add("Link", track.Link);
-            viewBag.Add("AlbumId", albumId);
+            this.ViewBag["Name"] = track.Name;
+            this.ViewBag["Price"] = track.Price.ToString("F2");
+            this.ViewBag["Link"] = track.Link;
+            this.ViewBag["AlbumId"] = albumId;
 
-            return View("Details", viewBag, "AuthLayout");
+            return View("Details", "AuthLayout");
         }
     }
 }

@@ -4,7 +4,6 @@
     using SIS.Framework.ActionResults.Contracts;
     using SIS.Framework.Attributes;
     using SIS.Framework.Attributes.Methods;
-    using System.Collections.Generic;
     using System.Linq;  
 
     public class AlbumsController : BaseController
@@ -39,10 +38,9 @@
                 }
             }
 
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Albums", albumsHtml);
+            this.ViewBag["Albums"] = albumsHtml;
 
-            return View("All", viewBag, "AuthLayout");
+            return View("All", "AuthLayout");
         }
 
         public IActionResult Create()
@@ -52,7 +50,7 @@
                 return this.RedirectToAction("/users/login");
             }
 
-            return View("Create", null, "AuthLayout");
+            return View("Create", "AuthLayout");
         }
 
         [HttpPost]
@@ -124,14 +122,13 @@
                 tracksHtml += "</ul>";
             }
 
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Id", album.Id);
-            viewBag.Add("Name", album.Name);
-            viewBag.Add("Cover", album.Cover);
-            viewBag.Add("Price", album.Price.ToString("F2"));
-            viewBag.Add("Tracks", tracksHtml);
+            this.ViewBag["Id"] = album.Id;
+            this.ViewBag["Name"] = album.Name;
+            this.ViewBag["Cover"] = album.Cover;
+            this.ViewBag["Price"] = album.Price.ToString("F2");
+            this.ViewBag["Tracks"] = tracksHtml;
 
-            return View("Details", viewBag, "AuthLayout");
+            return View("Details", "AuthLayout");
         }
     }
 }

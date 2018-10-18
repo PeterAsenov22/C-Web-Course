@@ -64,6 +64,7 @@
         {
             var response = new HttpResponse();
             controller.Response = response;
+            // var actionParameters = this.MapActionParameters(action, controller.Request);
             IActionResult actionResult = (IActionResult)action.Invoke(controller, null);
             string invocationResult = actionResult.Invoke();
 
@@ -83,6 +84,39 @@
             }
 
             throw new InvalidOperationException("The view result is not supported.");
+        }
+
+        private object[] MapActionParameters(MethodInfo action, IHttpRequest request)
+        {
+            ParameterInfo[] actionParametersInfo = action.GetParameters();
+            object[] mappedActionParameters = new object[actionParametersInfo.Length];
+
+            for (int i = 0; i < mappedActionParameters.Length; i++)
+            {
+                ParameterInfo currentParameterInfo = actionParametersInfo[i];
+
+                if (currentParameterInfo.ParameterType.IsPrimitive
+                    || currentParameterInfo.ParameterType == typeof(string))
+                {
+                    mappedActionParameters[i] = ProcessPrimitiveParameter(currentParameterInfo, request);
+                }
+                else
+                {
+                    mappedActionParameters[i] = ProcessBindingModelParameters(currentParameterInfo, request);
+                }
+            }
+
+            return mappedActionParameters;
+        }
+
+        private object ProcessBindingModelParameters(ParameterInfo currentParameterInfo, IHttpRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        private object ProcessPrimitiveParameter(ParameterInfo currentParameterInfo, IHttpRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         private IHttpResponse TryHandleResourceRequest(IHttpRequest request)

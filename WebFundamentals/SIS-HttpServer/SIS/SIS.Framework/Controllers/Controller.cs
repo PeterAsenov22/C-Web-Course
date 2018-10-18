@@ -7,7 +7,6 @@
     using Services;
     using Services.Implementations;
     using System.Runtime.CompilerServices;
-    using System.Collections.Generic;
     using Utilities;
     using Views;
 
@@ -17,6 +16,7 @@
 
         protected Controller()
         {
+            this.ViewBag = new ViewBag();
             this.UserCookieService = new UserCookieService();
         }
 
@@ -24,11 +24,12 @@
 
         public IHttpResponse Response { get; set; }
 
+        protected ViewBag ViewBag { get; }
+
         protected IUserCookieService UserCookieService { get; set; }
 
         protected IViewable View(
             [CallerMemberName] string actionName = "",
-            IDictionary<string, string> viewBag = null,
             string layoutName = "")
         {
             string controllerName = ControllerUtilities.GetControllerName(this);
@@ -40,8 +41,9 @@
             }
 
             string layoutPath = ControllerUtilities.GetLayoutPath(layoutName);
-            View view = new View(viewPath, layoutPath, viewBag);
+            View view = new View(viewPath, layoutPath, this.ViewBag.Data);
 
+            this.ViewBag.Clear();
             return new ViewResult(view);
         }
 
