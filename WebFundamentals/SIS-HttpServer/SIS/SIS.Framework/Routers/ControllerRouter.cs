@@ -1,4 +1,6 @@
-﻿namespace SIS.Framework.Routers
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SIS.Framework.Routers
 {  
     using ActionResults.Contracts;
     using Attributes;
@@ -65,7 +67,7 @@
             var response = new HttpResponse();
             controller.Response = response;
 
-            var actionParameters = this.MapActionParameters(action, controller.Request);
+            var actionParameters = this.MapActionParameters(action, controller);
             IActionResult actionResult = (IActionResult)action.Invoke(controller, actionParameters);
 
             string invocationResult = actionResult.Invoke();
@@ -88,7 +90,7 @@
             throw new InvalidOperationException("The view result is not supported.");
         }
 
-        private object[] MapActionParameters(MethodInfo action, IHttpRequest request)
+        private object[] MapActionParameters(MethodInfo action, Controller controller)
         {
             ParameterInfo[] actionParametersInfo = action.GetParameters();
             object[] mappedActionParameters = new object[actionParametersInfo.Length];
@@ -100,15 +102,41 @@
                 if (currentParameterInfo.ParameterType.IsPrimitive
                     || currentParameterInfo.ParameterType == typeof(string))
                 {
-                    mappedActionParameters[i] = ProcessPrimitiveParameter(currentParameterInfo, request);
+                    mappedActionParameters[i] = ProcessPrimitiveParameter(currentParameterInfo, controller.Request);
                 }
                 else
                 {
-                    mappedActionParameters[i] = ProcessBindingModelParameters(currentParameterInfo, request);
+                    object bindingModel = ProcessBindingModelParameters(currentParameterInfo, controller.Request);
+                    controller.ModelState.IsValid = this.IsValidModel(bindingModel, currentParameterInfo.ParameterType);
+                    mappedActionParameters[i] = bindingModel;
                 }
             }
 
             return mappedActionParameters;
+        }
+
+        private bool? IsValidModel(object bindingModel, Type bindingModelType)
+        {
+            var properties = bindingModelType.GetProperties();
+            foreach (var property in properties)
+            {
+                var propertyValidationAttributes = property
+                    .GetCustomAttributes()
+                    .Where(a => a is ValidationAttribute)
+                    .Cast<ValidationAttribute>()
+                    .ToList();
+
+                foreach (var validationAttribute in propertyValidationAttributes)
+                {
+                    var propertyValue = property.GetValue(bindingModel);
+                    if (!validationAttribute.IsValid(propertyValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private object ProcessBindingModelParameters(ParameterInfo parameter, IHttpRequest request)

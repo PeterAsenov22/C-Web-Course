@@ -4,6 +4,7 @@
     using ActionResults.Contracts;
     using HTTP.Responses.Contracts;
     using HTTP.Requests.Contracts;
+    using Models;
     using Services;
     using Services.Implementations;
     using System.Runtime.CompilerServices;
@@ -23,6 +24,8 @@
         public IHttpRequest Request { get; set; }
 
         public IHttpResponse Response { get; set; }
+
+        public Model ModelState { get; } = new Model();
 
         protected ViewBag ViewBag { get; }
 
