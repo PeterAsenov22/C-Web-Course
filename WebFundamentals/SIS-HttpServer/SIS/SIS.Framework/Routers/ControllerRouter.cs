@@ -64,8 +64,10 @@
         {
             var response = new HttpResponse();
             controller.Response = response;
-            // var actionParameters = this.MapActionParameters(action, controller.Request);
-            IActionResult actionResult = (IActionResult)action.Invoke(controller, null);
+
+            var actionParameters = this.MapActionParameters(action, controller.Request);
+            IActionResult actionResult = (IActionResult)action.Invoke(controller, actionParameters);
+
             string invocationResult = actionResult.Invoke();
 
             if (actionResult is IViewable)
@@ -109,14 +111,47 @@
             return mappedActionParameters;
         }
 
-        private object ProcessBindingModelParameters(ParameterInfo currentParameterInfo, IHttpRequest request)
+        private object ProcessBindingModelParameters(ParameterInfo parameter, IHttpRequest request)
         {
-            throw new NotImplementedException();
+            Type bindingModelType = parameter.ParameterType;
+            var bindingModelInstance = Activator.CreateInstance(bindingModelType);
+            var bindingModelProperties = bindingModelType.GetProperties();
+
+            foreach (var property in bindingModelProperties)
+            {
+                try
+                {
+                    object value = this.GetParameterFromRequestData(request, property.Name.ToCamelCase());
+                    property.SetValue(bindingModelInstance, Convert.ChangeType(value, property.PropertyType));
+                }
+                catch
+                {
+                    Console.WriteLine($"The {property.Name} field could not be mapped.");
+                }
+            }
+
+            return Convert.ChangeType(bindingModelInstance, bindingModelType);
         }
 
-        private object ProcessPrimitiveParameter(ParameterInfo currentParameterInfo, IHttpRequest request)
+        private object ProcessPrimitiveParameter(ParameterInfo parameter, IHttpRequest request)
         {
-            throw new NotImplementedException();
+            object value = this.GetParameterFromRequestData(request, parameter.Name.ToCamelCase());
+            return Convert.ChangeType(value, parameter.ParameterType);
+        }
+
+        private object GetParameterFromRequestData(IHttpRequest request, string parameterName)
+        {
+            if (request.QueryData.ContainsKey(parameterName))
+            {
+                return request.QueryData[parameterName];
+            }
+
+            if (request.FormData.ContainsKey(parameterName))
+            {
+                return request.FormData[parameterName];
+            }
+
+            return null;
         }
 
         private IHttpResponse TryHandleResourceRequest(IHttpRequest request)
