@@ -4,7 +4,6 @@
     using SIS.Framework.ActionResults.Contracts;
     using SIS.Framework.Attributes.Methods;
     using SIS.Framework.Services;
-    using SIS.Framework.Services.Implementations;
     using SIS.HTTP.Cookies;
     using System;
     using System.Linq;
@@ -15,9 +14,9 @@
     {
         private readonly IHashService hashService;
 
-        public UsersController()
+        public UsersController(IHashService hashService)
         {
-            this.hashService = new HashService();
+            this.hashService = hashService;
         }
 
         public IActionResult Login()

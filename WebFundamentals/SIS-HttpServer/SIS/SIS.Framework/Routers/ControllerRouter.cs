@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SIS.Framework.Routers
+﻿namespace SIS.Framework.Routers
 {  
     using ActionResults.Contracts;
     using Attributes;
@@ -12,8 +10,10 @@ namespace SIS.Framework.Routers
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
+    using Services;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -23,6 +23,13 @@ namespace SIS.Framework.Routers
 
     public class ControllerRouter : IHttpHandler
     {
+        private readonly IDependencyContainer dependencyContainer;
+
+        public ControllerRouter(IDependencyContainer dependencyContainer)
+        {
+            this.dependencyContainer = dependencyContainer;
+        }
+
         public IHttpResponse Handle(IHttpRequest request)
         {
             var response = this.TryHandleResourceRequest(request);
@@ -286,7 +293,7 @@ namespace SIS.Framework.Routers
                 return null;
             }
 
-            var controller = (Controller)Activator.CreateInstance(controllerType);
+            var controller = (Controller)this.dependencyContainer.CreateInstance(controllerType);
             return controller;
         }
     }

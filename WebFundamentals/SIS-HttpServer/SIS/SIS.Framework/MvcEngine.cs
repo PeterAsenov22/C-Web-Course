@@ -1,6 +1,7 @@
 ﻿namespace SIS.Framework
 {
     using Routers;
+    using Services;
     using System;
     using System.Reflection;
     using WebServer;
@@ -8,9 +9,9 @@
 
     public class MvcEngine
     {
-        public static void Run()
+        public static void Run(IDependencyContainer dependencyContainer)
         {
-            IHttpHandler handler = new ControllerRouter();
+            IHttpHandler handler = new ControllerRouter(dependencyContainer);
             Server server = new Server(MvcContext.Get.Port, handler);
 
             RegisterAssemblyName();
