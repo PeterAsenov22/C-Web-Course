@@ -1,0 +1,24 @@
+﻿@model ChushkaWebApp.Web.ViewModels.Accounts.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1 class="text-center">Login</h1>
+<hr class="bg-secondary half-width" />
+<form class="mx-auto half-width" method="post">
+    <div class="form-group">
+        <label asp-for="Username"></label>
+        <input class="form-control" asp-for="Username" placeholder="Username...">
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input class="form-control" asp-for="Password" placeholder="Password...">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn chushka-bg-color">Login</button>
+    </div>
+</form>
+

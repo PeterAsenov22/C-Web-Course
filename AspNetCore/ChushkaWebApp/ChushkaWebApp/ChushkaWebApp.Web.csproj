@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>aspnet-ChushkaWebApp-75DAACF2-43F3-46BD-8792-5EE2F1E04270</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChushkaWebApp.Data\ChushkaWebApp.Data.csproj" />
+    <ProjectReference Include="..\ChushkaWebApp.Services\ChushkaWebApp.Services.csproj" />
+  </ItemGroup>
+
+</Project>
