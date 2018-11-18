@@ -1,0 +1,50 @@
+﻿@model ChushkaWebApp.Web.ViewModels.Orders.AllOrdersViewModel
+
+@{
+    ViewData["Title"] = "All";
+}
+
+<h1 class="text-center">All Orders</h1>
+<hr class="hr-2" />
+<div class="mx-auto w-75">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order ID</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Product</th>
+            <th scope="col">Ordered On</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(var i = 0; i < Model.Orders.Count(); i++)
+        {
+            var index = i + 1;
+            var order = Model.Orders.ToList()[i];
+             
+            if(i % 2 == 0)
+            {
+               <tr class="chushka-bg-color text-white">
+                   <th scope="row">@index</th>
+                   <td>@order.Id</td>
+                   <td>@order.Customer</td>
+                   <td>@order.Product</td>
+                   <td>@order.OrderedOn</td>
+               </tr>
+            }
+            else
+            {
+                <tr>
+                    <th scope="row">@index</th>
+                    <td>@order.Id</td>
+                    <td>@order.Customer</td>
+                    <td>@order.Product</td>
+                    <td>@order.OrderedOn</td>
+                </tr>
+            }       
+        }
+        </tbody>
+    </table>
+</div>
+

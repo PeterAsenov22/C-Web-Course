@@ -1,0 +1,32 @@
+﻿@model ChushkaWebApp.Web.ViewModels.Home.IndexViewModel
+
+@{
+    ViewData["Title"] = "IndexAuth";
+}
+
+<div class="container-fluid text-center">
+    <h2>Greetings, @User.Identity.Name!</h2>
+    @if(User.IsInRole("Administrator"))
+    {
+        <h4>Enjoy your work today!</h4>
+    }
+    else
+    {
+        <h4>Feel free to view and order any of our products.</h4>
+    }
+</div>
+<hr class="hr-2 bg-dark" />
+<div class="container-fluid">
+    @{ var rows = (Model.Products.Count() / 5) + 1; }
+    @for (var i = 0; i < rows; i++)
+    {
+    <div class="row justify-content-around mt-4">
+        @for (var j = i * 5; j < (((rows - i) > 1) ? (5 * (i + 1)) : ((Model.Products.Count() % 5) + (i * 5))); j++)
+        {
+            var product = Model.Products.ToList()[j];
+
+            @await Html.PartialAsync("_ProductCardPartial", product)
+        }
+    </div>
+    }
+</div>
