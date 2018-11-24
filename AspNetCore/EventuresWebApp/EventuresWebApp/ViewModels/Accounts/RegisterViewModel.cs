@@ -5,11 +5,13 @@
     public class RegisterViewModel
     {
         [Required]
+        [MinLength(3, ErrorMessage = "Username should be at least 3 symbols long.")]
+        [RegularExpression(@"^[A-Za-z0-9_\-\.*~]+$", ErrorMessage = "Username may only contain alphanumeric characters, dashes, underscores, dots, asterisks and tildes.")]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Please enter valid e-mail address.")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
@@ -22,11 +24,12 @@
         public string LastName { get; set; }
 
         [Required]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "UCN should be exactly 10 symbols long.")]
         [Display(Name = "UCN")]
         public string UniqueCitizenNumber { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [MinLength(5, ErrorMessage = "Username should be at least 5 symbols long.")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
