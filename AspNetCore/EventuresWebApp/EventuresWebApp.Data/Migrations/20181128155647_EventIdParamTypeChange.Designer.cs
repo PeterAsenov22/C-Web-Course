@@ -4,14 +4,16 @@ using EventuresWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EventuresWebApp.Data.Migrations
 {
     [DbContext(typeof(EventuresDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181128155647_EventIdParamTypeChange")]
+    partial class EventIdParamTypeChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,7 +105,9 @@ namespace EventuresWebApp.Data.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CustomerId");
+                    b.Property<int>("CustomerId");
+
+                    b.Property<string>("CustomerId1");
 
                     b.Property<string>("EventId");
 
@@ -113,7 +117,7 @@ namespace EventuresWebApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerId1");
 
                     b.HasIndex("EventId");
 
@@ -234,7 +238,7 @@ namespace EventuresWebApp.Data.Migrations
                 {
                     b.HasOne("EventuresWebApp.Models.EventuresUser", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId1");
 
                     b.HasOne("EventuresWebApp.Models.Event", "Event")
                         .WithMany("Orders")

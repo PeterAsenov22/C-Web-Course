@@ -1,6 +1,7 @@
 ﻿namespace EventuresWebApp.Models
 {
     using System;
+    using System.Collections.Generic;
 
     public class Event
     {
@@ -17,5 +18,7 @@
         public int TotalTickets { get; set; }
 
         public decimal PricePerTicket { get; set; }
+
+        public ICollection<Order> Orders { get; set; }
     }
 }

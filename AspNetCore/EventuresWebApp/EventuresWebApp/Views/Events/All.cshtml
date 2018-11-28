@@ -13,7 +13,7 @@
             <th class="font-weight-bold" scope="col">Name</th>
             <th class="font-weight-bold" scope="col">Start</th>
             <th class="font-weight-bold" scope="col">End</th>
-            <th class="font-weight-bold" scope="col">Place</th>
+            <th class="font-weight-bold" scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -25,7 +25,19 @@
             <td>@eventViewModel.Name</td>
             <td>@eventViewModel.Start</td>
             <td>@eventViewModel.End</td>
-            <td>@eventViewModel.Place</td>
+            <td>
+                <form class="form-inline" method="post" asp-controller="Orders" asp-action="Order">
+                    <div class="form-group">
+                        <label class="label" asp-for="@eventViewModel.TicketsCount"></label>
+                        <input class="form-control ml-2" name="ticketsCount" asp-for="@eventViewModel.TicketsCount" value="">
+                        <span asp-validation-for="@eventViewModel.TicketsCount" class="text-danger"></span>
+                        <input type="hidden" name="eventId" value="@eventViewModel.Id"/>
+                    </div>
+                    <div class="ml-2">
+                        <button type="submit" class="btn eventures-bg-color">Order</button>
+                    </div>
+                </form>
+            </td>
         </tr>
     }
     </tbody>

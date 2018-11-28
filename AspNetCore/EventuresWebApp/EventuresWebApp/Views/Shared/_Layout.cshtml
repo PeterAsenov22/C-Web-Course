@@ -33,10 +33,23 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="nav-link" asp-controller="Events" asp-action="All">All Events</a>
+                                    <a class="nav-link" asp-controller="Events" asp-action="My">My Events</a>
                                     @if (User.IsInRole("Administrator"))
                                     {
                                         <a class="nav-link" asp-controller="Events" asp-action="Create">Create Event</a>
                                     }
+                                </div>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <strong>Orders</strong>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="nav-link" asp-controller="Orders" asp-action="All">All Orders</a>
                                 </div>
                             </li>
                         }

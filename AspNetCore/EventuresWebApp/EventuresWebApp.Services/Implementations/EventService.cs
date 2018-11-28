@@ -23,10 +23,10 @@
                 .Events
                 .Select(e => new EventModel
                 {
+                    Id = e.Id,
                     Name = e.Name,
                     Start = string.Format("{0:g}", e.Start),
-                    End = string.Format("{0:g}", e.End),
-                    Place = e.Place
+                    End = string.Format("{0:g}", e.End)
                 })
                 .ToList();
         }
@@ -55,10 +55,14 @@
                 {
                     Name = e.Name,
                     Start = string.Format("{0:g}", e.Start),
-                    End = string.Format("{0:g}", e.End),
-                    Place = e.Place
+                    End = string.Format("{0:g}", e.End)
                 })
                 .Last();
+        }
+
+        public bool Exists(string id)
+        {
+            return this.db.Events.Any(e => e.Id == id);
         }
     }
 }
