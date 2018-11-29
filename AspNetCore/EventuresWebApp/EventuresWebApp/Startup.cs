@@ -54,6 +54,12 @@
             services.AddDomainServices();
             services.AddScoped<LogAdminActivityActionFilter>();
 
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            });
+
             services.ConfigureApplicationCookie(opitions =>
             {
                 opitions.LoginPath = "/Accounts/Login";
