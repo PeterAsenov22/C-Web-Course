@@ -1,15 +1,18 @@
 ﻿namespace EventuresWebApp.Web.Controllers
 {
+    using AutoMapper;
+    using Filters;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;  
+    using Models;
+    using Services.Interfaces;
+    using Services.Models;    
     using System.Linq;
     using System.Threading.Tasks;
-    using Services.Interfaces;
+    using System.Collections.Generic;
     using ViewModels.Events;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Filters;
-    using Models;
-    using Microsoft.AspNetCore.Identity;
 
     public class EventsController : Controller
     {
@@ -17,31 +20,28 @@
         private readonly IOrderService orders;
         private readonly UserManager<EventuresUser> userManager;
         private readonly ILogger logger;
+        private readonly IMapper mapper;
 
         public EventsController(
             IEventService events, 
             IOrderService orders,
             UserManager<EventuresUser> userManager,
-            ILogger<EventsController> logger)
+            ILogger<EventsController> logger,
+            IMapper mapper)
         {
             this.events = events;
             this.orders = orders;
             this.userManager = userManager;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [Authorize]
         public IActionResult All()
         {
-            var eventsViewModel = new AllEventsViewModel()
+            var eventsViewModel = new AllEventsViewModel
             {
-                Events = this.events.All().Select(e => new EventViewModel
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    Start = e.Start,
-                    End = e.End
-                })
+                Events = mapper.Map<EventModel[], IEnumerable<EventViewModel>>(this.events.All().ToArray())
             };
 
             return View(eventsViewModel);
@@ -52,15 +52,9 @@
         {
             var user = await userManager.FindByNameAsync(User.Identity.Name);
 
-            var eventsViewModel = new AllEventsViewModel()
+            var eventsViewModel = new AllEventsViewModel
             {
-                Events = this.orders.ByUserId(user.Id).Select(e => new EventViewModel
-                {
-                    Name = e.EventName,
-                    Start = e.EventStart,
-                    End = e.EventEnd,
-                    TicketsCount = e.TicketsCount
-                })
+                Events = mapper.Map<OrderModel[], IEnumerable<EventViewModel>>(this.orders.ByUserId(user.Id).ToArray())
             };
 
             return View(eventsViewModel);

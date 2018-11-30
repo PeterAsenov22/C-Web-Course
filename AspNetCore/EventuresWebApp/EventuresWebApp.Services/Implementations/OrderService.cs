@@ -56,7 +56,7 @@
                 .Select(o => new AdminOrderModel()
                 {
                     EventName = o.Event.Name,
-                    Customer = $"{o.Customer.FirstName} {o.Customer.LastName}",
+                    Customer = (o.Customer.FirstName.Length == 0) ? $"{o.Customer.FirstName} {o.Customer.LastName}" : o.Customer.UserName,
                     OrderedOn = string.Format("{0:g}", o.OrderedOn)
                 })
                 .ToList();

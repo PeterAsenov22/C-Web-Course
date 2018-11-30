@@ -1,6 +1,8 @@
 ﻿namespace EventuresWebApp.Web
 {
+    using AutoMapper;
     using Data;
+    using Filters;
     using Infrastructure.Extensions;
     using Models;
     using Microsoft.AspNetCore.Builder;
@@ -12,7 +14,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Middlewares.MiddlewareExtensions;
-    using Filters;
     using System;
 
     public class Startup
@@ -59,6 +60,8 @@
                 facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
+
+            services.AddAutoMapper();
 
             services.ConfigureApplicationCookie(opitions =>
             {

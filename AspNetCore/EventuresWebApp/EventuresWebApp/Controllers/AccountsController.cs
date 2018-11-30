@@ -1,5 +1,6 @@
 ﻿namespace EventuresWebApp.Web.Controllers
 {
+    using AutoMapper;
     using System;
     using System.Linq;
     using Models;
@@ -11,10 +12,12 @@
     public class AccountsController : Controller
     {
         private readonly SignInManager<EventuresUser> signInManager;
+        private readonly IMapper mapper;
 
-        public AccountsController(SignInManager<EventuresUser> signInManager)
+        public AccountsController(SignInManager<EventuresUser> signInManager, IMapper mapper)
         {
             this.signInManager = signInManager;
+            this.mapper = mapper;
         }
 
         public IActionResult Login()
@@ -56,14 +59,7 @@
                 return View(model);
             }
 
-            var user = new EventuresUser
-            {
-                Email = model.Email,
-                UserName = model.Username,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                UniqueCitizenNumber = model.UniqueCitizenNumber
-            };
+            var user = this.mapper.Map<EventuresUser>(model);
 
             var result = this.signInManager.UserManager.CreateAsync(user, model.Password).Result;
 
