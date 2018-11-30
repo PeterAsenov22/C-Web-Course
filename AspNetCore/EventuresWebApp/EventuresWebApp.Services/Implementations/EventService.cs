@@ -21,6 +21,7 @@
         {
             return this.db
                 .Events
+                .Where(e => e.TicketsLeft > 0)
                 .Select(e => new EventModel
                 {
                     Id = e.Id,
@@ -40,6 +41,7 @@
                 Start = start,
                 End = end,
                 TotalTickets = totalTickets,
+                TicketsLeft = totalTickets,
                 PricePerTicket = pricePerTicket
             };
 
@@ -63,6 +65,18 @@
         public bool Exists(string id)
         {
             return this.db.Events.Any(e => e.Id == id);
+        }
+
+        public int TicketsLeftById(string id)
+        {
+            return this.db.Events.First(e => e.Id == id).TicketsLeft;
+        }
+
+        public void ReduceTicketsLeftCount(string id, int boughtTicketsCount)
+        {
+            var _event = this.db.Events.First(e => e.Id == id);
+            _event.TicketsLeft -= boughtTicketsCount;
+            this.db.SaveChanges();
         }
     }
 }

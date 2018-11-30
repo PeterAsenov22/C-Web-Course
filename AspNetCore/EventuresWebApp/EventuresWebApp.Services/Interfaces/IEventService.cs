@@ -13,5 +13,9 @@
         EventModel Last();
 
         bool Exists(string id);
+
+        int TicketsLeftById(string id);
+
+        void ReduceTicketsLeftCount(string id, int boughtTicketsCount);
     }
 }

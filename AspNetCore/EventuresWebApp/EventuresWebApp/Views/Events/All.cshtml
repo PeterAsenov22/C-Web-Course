@@ -6,6 +6,13 @@
 
 <h1 class="text-center">All Events</h1>
 <hr class="eventures-bg-color hr-3 mt-3" />
+@if (Model.ErrorMessage != null)
+{
+<div class="alert alert-warning alert-dismissible m-3">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>Oops!</strong> @Model.ErrorMessage
+</div>
+}
 <table class="table">
     <thead>
         <tr>

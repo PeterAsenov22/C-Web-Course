@@ -39,7 +39,14 @@
 
             if (ticketsCount > 0 && events.Exists(eventId))
             {
+                var ticketsLeft = this.events.TicketsLeftById(eventId);
+                if (ticketsLeft < ticketsCount)
+                {
+                    return this.RedirectToAction("All", "Events", new {ErrorMessage = $"There are only {ticketsLeft} tickets left for this event."});
+                }
+
                 this.orders.Order(eventId, user.Id, ticketsCount);
+                this.events.ReduceTicketsLeftCount(eventId, ticketsCount);
             }
 
             return this.RedirectToAction("My", "Events");

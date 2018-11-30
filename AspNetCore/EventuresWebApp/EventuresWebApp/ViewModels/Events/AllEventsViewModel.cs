@@ -5,5 +5,7 @@
     public class AllEventsViewModel
     {
         public IEnumerable<EventViewModel> Events { get; set; }
+
+        public string ErrorMessage { get; set; }
     }
 }

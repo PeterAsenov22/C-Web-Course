@@ -17,6 +17,8 @@
 
         public int TotalTickets { get; set; }
 
+        public int TicketsLeft { get; set; }
+
         public decimal PricePerTicket { get; set; }
 
         public ICollection<Order> Orders { get; set; }

@@ -37,11 +37,12 @@
         }
 
         [Authorize]
-        public IActionResult All()
+        public IActionResult All(string errorMessage)
         {
             var eventsViewModel = new AllEventsViewModel
             {
-                Events = mapper.Map<EventModel[], IEnumerable<EventViewModel>>(this.events.All().ToArray())
+                Events = mapper.Map<EventModel[], IEnumerable<EventViewModel>>(this.events.All().ToArray()),
+                ErrorMessage = errorMessage
             };
 
             return View(eventsViewModel);
