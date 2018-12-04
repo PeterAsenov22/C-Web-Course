@@ -6,13 +6,15 @@
 
     public interface IEventService
     {
-        IEnumerable<EventModel> All();
+        IEnumerable<EventModel> All(int page, int pageSize);
 
         void Create(string name, string place, DateTime start, DateTime end, int totalTickets, decimal pricePerTicket);
 
         EventModel Last();
 
         bool Exists(string id);
+
+        int Count();
 
         int TicketsLeftById(string id);
 

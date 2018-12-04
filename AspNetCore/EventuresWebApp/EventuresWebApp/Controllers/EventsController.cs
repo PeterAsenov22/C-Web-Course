@@ -8,7 +8,8 @@
     using Microsoft.Extensions.Logging;  
     using Models;
     using Services.Interfaces;
-    using Services.Models;    
+    using Services.Models;
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -16,6 +17,8 @@
 
     public class EventsController : Controller
     {
+        private const int PageSize = 5;
+
         private readonly IEventService events;
         private readonly IOrderService orders;
         private readonly UserManager<EventuresUser> userManager;
@@ -37,11 +40,14 @@
         }
 
         [Authorize]
-        public IActionResult All(string errorMessage)
+        public IActionResult All(string errorMessage, int page = 1)
         {
             var eventsViewModel = new AllEventsViewModel
             {
-                Events = mapper.Map<EventModel[], IEnumerable<EventViewModel>>(this.events.All().ToArray()),
+                Events = mapper.Map<EventModel[], IEnumerable<EventViewModel>>(this.events.All(page, PageSize).ToArray()),
+                TotalPages = (int)Math.Ceiling(this.events.Count() / (double)PageSize),
+                CurrentPage = page,
+                PageSize = PageSize,
                 ErrorMessage = errorMessage
             };
 

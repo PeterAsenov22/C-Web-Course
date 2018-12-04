@@ -17,11 +17,13 @@
             this.db = db;
         }
 
-        public IEnumerable<EventModel> All()
+        public IEnumerable<EventModel> All(int page, int pageSize)
         {
             return this.db
                 .Events
                 .Where(e => e.TicketsLeft > 0)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(e => new EventModel
                 {
                     Id = e.Id,
@@ -65,6 +67,11 @@
         public bool Exists(string id)
         {
             return this.db.Events.Any(e => e.Id == id);
+        }
+
+        public int Count()
+        {
+            return this.db.Events.Count(e => e.TicketsLeft > 0);
         }
 
         public int TicketsLeftById(string id)
