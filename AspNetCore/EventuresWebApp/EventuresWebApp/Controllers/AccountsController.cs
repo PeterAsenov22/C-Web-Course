@@ -1,4 +1,6 @@
-﻿namespace EventuresWebApp.Web.Controllers
+﻿using System.Threading.Tasks;
+
+namespace EventuresWebApp.Web.Controllers
 {
     using AutoMapper;
     using System;
@@ -12,11 +14,16 @@
     public class AccountsController : Controller
     {
         private readonly SignInManager<EventuresUser> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IMapper mapper;
 
-        public AccountsController(SignInManager<EventuresUser> signInManager, IMapper mapper)
+        public AccountsController(
+            SignInManager<EventuresUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
+            IMapper mapper)
         {
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
             this.mapper = mapper;
         }
 
@@ -76,6 +83,68 @@
         {
             this.signInManager.SignOutAsync().Wait();
             return this.RedirectToAction("Index", "Home");
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Administration()
+        {
+            var users = this.signInManager
+                .UserManager
+                .Users
+                .Select(u => new UserViewModel()
+                {
+                    Id = u.Id,
+                    Username = u.UserName,
+                })
+                .ToList();
+
+            foreach (var userViewModel in users)
+            {
+                var user = this.signInManager
+                    .UserManager
+                    .FindByIdAsync(userViewModel.Id)
+                    .GetAwaiter()
+                    .GetResult();
+
+                userViewModel.IsAdmin = this.signInManager
+                    .UserManager
+                    .IsInRoleAsync(user, "Administrator")
+                    .GetAwaiter()
+                    .GetResult();
+            }
+
+            var administrationViewModel = new AdministrationViewModel
+            {
+                Users = users
+            };
+
+            return View(administrationViewModel);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Promote(string id)
+        {
+            var user = await this.signInManager.UserManager.FindByIdAsync(id);
+
+            if (!await this.signInManager.UserManager.IsInRoleAsync(user, "Administrator"))
+            {
+                await this.signInManager.UserManager.AddToRoleAsync(user, "Administrator");
+            }
+
+            return this.RedirectToAction("Administration");
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Demote(string id)
+        {
+            var user = await this.signInManager.UserManager.FindByIdAsync(id);
+
+            if (await this.signInManager.UserManager.IsInRoleAsync(user, "Administrator"))
+            {
+                await this.signInManager.UserManager.RemoveFromRoleAsync(user, "Administrator");
+            }           
+
+            return this.RedirectToAction("Administration");
         }
     }
 }
